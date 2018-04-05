@@ -1,3 +1,7 @@
+# app generated logs
+*.log
+# app downloaded videos
+*.mp4
 
 # Created by https://www.gitignore.io/api/python
 
