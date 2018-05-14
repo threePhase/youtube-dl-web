@@ -1,8 +1,7 @@
-from __future__ import unicode_literals
-import youtube_dl
+from multiprocessing import Process
 import os
-from flask import abort, Flask, request
-app = Flask(__name__)
+import uuid
+import youtube_dl
 
 output_format = '%(title)s.%(ext)s'
 
@@ -16,6 +15,33 @@ class ErrorLogger(object):
     def error(self, msg):
         print(msg)
 
+class Download(object):
+    """Encapsulates youtube-dl download task"""
+    def __init__(self, url, output_dir, provider):
+        self.output_dir = output_dir
+        self.provider = provider
+        self.url = url
+
+        self.download_id = uuid.uuid4()
+
+        self.filename = None
+        def finished_hook(d):
+            if d['status'] == 'finished':
+                self.filename = d['filename']
+                print(f'Finished downloading: {self.filename}')
+
+        self.process = Process(target=download, name=f'{self.download_id}',
+            args=(url, output_dir, provider, finished_hook,))
+        self.process.start()
+
+class Provider(object):
+    """Encapsulates youtube-dl provider data"""
+    def __init__(self, provider, username, password):
+        # TODO: setup proper provider -> ap_mso mapping
+        self.mso = provider
+        self.ap_username = username
+        self.ap_password = password
+
 ydl_opts = {
     'download_archive': 'downloads.log',
     'format': 'best',
@@ -23,39 +49,20 @@ ydl_opts = {
     'progress_hooks': [],
 }
 
-@app.route('/', methods=['GET'])
-def help():
-    man = ('<pre><code>'
-           '{}: youtube-dl as a service\n'
-           'POST outputDir [provider] [username] [password] url'
-           '</code></pre>'
-          ).format(__name__)
-    return man
-
-@app.route('/', methods=['POST'])
-def download():
-    url = request.form['url']
+def download(url, output_dir, provider, finished_hook):
     opts = ydl_opts
-
-    # add authentication parameters if present in request
-
-    if 'provider' in request.form:
-        # TODO: setup proper provider -> ap_mso mapping
-        opts['ap_mso'] = 'Comcast_SSO'
-        print('Setting up authentication using {}'.format(opts['ap_mso']))
-        opts['ap_username'] = request.form['username']
-        opts['ap_password'] = request.form['password']
-
-    output_dir = os.getcwd()
-    if 'outputDir' in request.form:
-        base_dir = os.environ['BASE_DIR']
-        output_dir = '{}/{}'.format(base_dir, request.form['outputDir'])
 
     opts['outtmpl'] = output_dir + '/' + output_format
 
-    # download video
-    with youtube_dl.YoutubeDL(opts) as ydl:
-        if ydl.download([url]) != 0:
-            abort(500)
+    opts['progress_hooks'] = [finished_hook]
 
-    return "Successfully downloaded to {}".format(output_dir)
+    if provider:
+        opts['ap_mso'] = provider.mso
+        opts['ap_username'] = provider.ap_username
+        opts['ap_password'] = provider.ap_password
+
+    with youtube_dl.YoutubeDL(opts) as ydl:
+        print(f'Downloading: {url}')
+        return ydl.download([url])
+
+
