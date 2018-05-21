@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from flask import abort, jsonify, Flask, make_response, request, send_from_directory
+from multiprocessing import Pool
 import os
+import uuid
 
 from download import Download, Provider
 
@@ -9,6 +11,7 @@ host = '127.0.0.1'
 port = 8080
 
 downloads = {}
+pool = Pool()
 
 @app.route('/', methods=['GET'])
 def base():
@@ -27,10 +30,9 @@ def get_downloads():
 def get_download_list():
     url = request.form['url']
 
-    output_dir = os.getcwd()
+    output_dir = os.environ['BASE_DIR']
     if 'outputDir' in request.form:
-        base_dir = os.environ['BASE_DIR']
-        output_dir = '{}/{}'.format(base_dir, request.form['outputDir'])
+        output_dir = '{}/{}'.format(output_dir, request.form['outputDir'])
 
     provider = None
     # add authentication parameters if present in request
@@ -40,10 +42,14 @@ def get_download_list():
 
     # queue download video
     print(f'Creating download task for: {url}')
-    d = Download(url, output_dir, provider)
-    downloads[d.download_id] = d
+
+    download_id = uuid.uuid4()
+    downloads[download_id] = pool.apply_async(Download,
+        (download_id, url, output_dir, provider,))
+
+
     # TODO: return proper url using download_id
-    return jsonify(d.download_id)
+    return f'{download_id}'
     
 @app.route('/downloads/<uuid:download_id>', methods=['GET'])
 def get_download_by_id(download_id):
@@ -53,30 +59,27 @@ def get_download_by_id(download_id):
 
     d = downloads[download_id]
 
-    if d.process.exitcode == None:
+    if not d.ready():
         print('Download has not yet completed.')
         return make_response(f'{download_id} is still downloading', 202) 
-    elif d.process.exitcode != 0:
+
+    if not d.successful():
+        print('Download failed unexpectedly.')
+        d.get()
         abort(500)
 
-    if d.filename == None:
-        print('Filename has not been set. Download still processing')
-        # TODO: add progress and estimate remaining time
-        return make_response(f'{download_id} is still processing', 202) 
+    download = d.get()
 
-    return send_from_directory(os.environ['BASE_DIR'],
-                                d.filename, as_attachment=True)
+    print(f"Sending {os.path.join(download.base_dir, download.basename)} for ID: {download_id}")
+
+    # TODO: verify file exists before attempting to send
+    return send_from_directory(download.base_dir, download.basename, as_attachment=True)
 
 def info(title):
     print(title)
     print('module name:', __name__)
     print('parent process:', os.getppid())
     print('process id:', os.getpid())
-
-def f(url, output_dir, provider):
-    info('function f')
-    print(f'URL: {url} - Output Directory: {output_dir} - Provider - {provider}')
-    download(url, output_dir, provider)
     
 if __name__ == '__main__':
     info('main line')
