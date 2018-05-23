@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from flask import abort, jsonify, Flask, make_response, request, send_from_directory
 from multiprocessing import Pool
 import os
+import urllib.parse
 import uuid
 
 from download import Download, Provider
@@ -47,9 +48,8 @@ def get_download_list():
     downloads[download_id] = pool.apply_async(Download,
         (download_id, url, output_dir, provider,))
 
-
-    # TODO: return proper url using download_id
-    return f'{download_id}'
+    url = urllib.parse.urljoin(request.url + '/', str(download_id))
+    return f'{url}'
     
 @app.route('/downloads/<uuid:download_id>', methods=['GET'])
 def get_download_by_id(download_id):
