@@ -5,16 +5,16 @@ import os
 import urllib.parse
 import uuid
 
-from download import Download, Provider
+from .download import Download, Provider
+from . import api
 
-app = Flask(__name__)
 host = '127.0.0.1'
 port = 8080
 
 downloads = {}
 pool = Pool()
 
-@app.route('/', methods=['GET'])
+@api.route('/', methods=['GET'])
 def base():
     man = ('<pre><code>\n'
            'youtube-dl as a service\n'
@@ -23,11 +23,11 @@ def base():
           )
     return man
 
-@app.route('/downloads', methods=['GET'])
+@api.route('/downloads', methods=['GET'])
 def get_downloads():
     return jsonify(list(downloads.keys()))
 
-@app.route('/downloads', methods=['POST'])
+@api.route('/downloads', methods=['POST'])
 def get_download_list():
     url = request.form['url']
 
@@ -51,7 +51,7 @@ def get_download_list():
     url = urllib.parse.urljoin(request.url + '/', str(download_id))
     return f'{url}'
     
-@app.route('/downloads/<uuid:download_id>', methods=['GET'])
+@api.route('/downloads/<uuid:download_id>', methods=['GET'])
 def get_download_by_id(download_id):
     print(f'Looking up download: {download_id}')
     if download_id not in downloads:
@@ -80,9 +80,3 @@ def info(title):
     print('module name:', __name__)
     print('parent process:', os.getppid())
     print('process id:', os.getpid())
-    
-if __name__ == '__main__':
-    info('main line')
-    # starting web server
-    print("Starting server")
-    app.run(host=host, port=port)
