@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %}Downloading {{ filename }}{% endblock %}
+{% block container %}
+  <h1>Downloading filename</h1>
+  <div class="row">
+    <div class="one-half column">
+      <?php if ($outputDir): ?>
+      <pre><code>Output Directory: {{ outputDir }}</code></pre>
+      <?php endif; ?>
+      <?php if ($url): ?>
+      <pre><code>URL: {{ url }}</code></pre>
+      <?php endif; ?>
+      <?php if ($provider): ?>
+      <pre><code>Provider: {{ provider }}</code></pre>
+      <?php endif; ?>
+      <?php if ($username): ?>
+      <pre><code>Username: {{ username }}</code></pre>
+      <?php endif; ?>
+      <?php if ($password): ?>
+      <pre><code>Password: {{ password }}</code></pre>
+      <?php endif; ?>
+    </div>
+    <div class="one-half column">
+      <?php if ($output): ?>
+      <pre><code>Output: {{ output }}</code></pre>
+      <?php endif; ?>
+    </div>
+    <a class="u-full-width button"
+       href={{ outputDir }}>Download {{ outputDir }}</a>
+    <a class="u-full-width button" href="/youtube-dl">Back</a>
+  </div>
+{% endblock %}

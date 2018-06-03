@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block title %}youtube-dl{% endblock %}
+{% block container %}
+  <h1>youtube-dl</h1>
+  <h3>Download an Episode</h3>
+  <form action="download" method="post">
+    <div class="row">
+      <div class="six columns">
+        <label for="urlInput">URL</label>
+        <input class="u-full-width" type="url"
+               name="url"
+               placeholder="https://www.youtube.com/watch?v=_nH6ya5g2-s"
+               id="urlInput">
+      </div>
+      <div class="six columns">
+        <label for="outputDirInput">Output Directory</label>
+        <input class="u-full-width" type="text"
+               name="outputDir"
+               placeholder="Tim and Eric's Bedtime Stories/Season 01"
+               id="outputDirInput">
+      </div>
+    </div>
+    <!-- Must be unnested to allow for sibling css selector hide/show -->
+    <label for="authenticateCheckbox">Authenticate?</label>
+    <input type="checkbox" id="authenticateCheckbox">
+    <div id="authenticate" class="row">
+      <div class="four columns">
+        <label for="providerSelect">Provider</label>
+        <select id="providerSelect" name="provider" class="u-full-width">
+          <option value="Comcast/Xfinity">Comcast/Xfinity</option>
+        </select>
+      </div>
+      <div class="four columns">
+        <label for="usernameInput">Username</label>
+        <input class="u-full-width" type="email"
+               name="username"
+               placeholder="email@example.com"
+               id="usernameInput">
+      </div>
+      <div class="four columns">
+        <label for="passwordInput">Password</label>
+        <input class="u-full-width" type="password"
+               name="password"
+               id="passwordInput">
+      </div>
+    </div>
+    <input class="u-full-width button-primary" type="submit" value="Download">
+  </form>
+{% endblock %}

@@ -26,4 +26,9 @@ def create_app(test_config=None):
     # place API blueprint on 'api.' subdomain
     app.register_blueprint(api, subdomain='api')
 
+    # setup home blueprint
+    from .home import home
+    # place home blueprint on top level domain
+    app.register_blueprint(home)
+
     return app
