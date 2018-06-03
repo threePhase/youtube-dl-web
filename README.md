@@ -26,10 +26,10 @@ py -3 -m venv venv
 venv\Scripts\activate.bat
 ```
 
-Install ytdlw:
+Install requirements:
 
 ```
-pip install -e .
+pip install -r requirements.txt
 ```
 
 
