@@ -4,26 +4,26 @@
   <h1>Downloading {{ info.filename }}</h1>
   <div class="row">
     <div class="one-half column">
-      <?php if ($outputDir): ?>
-      <pre><code>Output Directory: {{ info.data[outputDir] }}</code></pre>
-      <?php endif; ?>
-      <?php if ($url): ?>
+      {% if info.data['outputDir'] %}
+      <pre><code>Output Directory: {{ info.data['outputDir'] }}</code></pre>
+      {% endif %}
+      {% if info.data['url'] %}
       <pre><code>URL: {{ info.data['url'] }}</code></pre>
-      <?php endif; ?>
-      <?php if ($provider): ?>
+      {% endif %}
+      {% if info.data['provider'] %}
       <pre><code>Provider: {{ info.data['provider'] }}</code></pre>
-      <?php endif; ?>
-      <?php if ($username): ?>
+      {% endif %}
+      {% if info.data['username'] %}
       <pre><code>Username: {{ info.data['username'] }}</code></pre>
-      <?php endif; ?>
-      <?php if ($password): ?>
+      {% endif %}
+      {% if info.data['password'] %}
       <pre><code>Password: {{ info.data['password'] }}</code></pre>
-      <?php endif; ?>
+      {% endif %}
     </div>
     <div class="one-half column">
-      <?php if ($output): ?>
+      {% if info.output %}
       <pre><code>Output: {{ info.output }}</code></pre>
-      <?php endif; ?>
+      {% endif %}
     </div>
     <a class="u-full-width button"
        href={{ info.data['outputDir'] }}>Download {{ info.data['outputDir'] }}</a>
