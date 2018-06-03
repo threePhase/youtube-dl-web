@@ -80,3 +80,12 @@ coverage run -m pytest
 coverage report
 coverage html   # open htmlcov/index.html in a browser
 ```
+
+
+## Caveats ##
+
+Due to a
+[longstanding issue on macOS](https://bugs.python.org/issue30385#msg293958),
+Python applications that use `fork` must explicitly pass `env no_proxy='*'`
+when invoking `flask run`, otherwise the application will crash when making a
+download request to the API.
