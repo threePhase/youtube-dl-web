@@ -37,16 +37,14 @@ def download():
         data['password'] = request.form['password']
 
     if error == None:
-        if 'outputDir' not in data:
-            data['outputDir'] = 'TODO'
         r = requests.post(url_for('api.get_download_list'), data = data)
         # output = r.json()
-        # filename = output['filename']
-        output = 'TODO'
-        filename = 'TODO'
+        # link = output['link']
+        output = r.text
+        link = r.text
         info = {
             'data': data,
-            'filename': filename,
+            'link': link,
             'output': output,
         }
         return render_template('download.html',

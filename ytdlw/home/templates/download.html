@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
-{% block title %}Downloading {{ info.filename }}{% endblock %}
+{% block title %}Downloading {{ info.data['url'] }}{% endblock %}
 {% block container %}
-  <h1>Downloading {{ info.filename }}</h1>
+  <h1>Downloading {{ info.data['url'] }}</h1>
   <div class="row">
     <div class="one-half column">
       {% if info.data['outputDir'] %}
@@ -26,7 +26,7 @@
       {% endif %}
     </div>
     <a class="u-full-width button"
-       href={{ info.data['outputDir'] }}>Download {{ info.data['outputDir'] }}</a>
+       href={{ info.link }}>Download</a>
     <a class="u-full-width button" href="{{ url_for('home.base') }}">Back</a>
   </div>
 {% endblock %}
