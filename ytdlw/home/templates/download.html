@@ -1,32 +1,32 @@
 {% extends "layout.html" %}
-{% block title %}Downloading {{ download.filename }}{% endblock %}
+{% block title %}Downloading {{ info.filename }}{% endblock %}
 {% block container %}
-  <h1>Downloading filename</h1>
+  <h1>Downloading {{ info.filename }}</h1>
   <div class="row">
     <div class="one-half column">
       <?php if ($outputDir): ?>
-      <pre><code>Output Directory: {{ download.outputDir }}</code></pre>
+      <pre><code>Output Directory: {{ info.data[outputDir] }}</code></pre>
       <?php endif; ?>
       <?php if ($url): ?>
-      <pre><code>URL: {{ download.url }}</code></pre>
+      <pre><code>URL: {{ info.data['url'] }}</code></pre>
       <?php endif; ?>
       <?php if ($provider): ?>
-      <pre><code>Provider: {{ download.provider }}</code></pre>
+      <pre><code>Provider: {{ info.data['provider'] }}</code></pre>
       <?php endif; ?>
       <?php if ($username): ?>
-      <pre><code>Username: {{ download.username }}</code></pre>
+      <pre><code>Username: {{ info.data['username'] }}</code></pre>
       <?php endif; ?>
       <?php if ($password): ?>
-      <pre><code>Password: {{ download.password }}</code></pre>
+      <pre><code>Password: {{ info.data['password'] }}</code></pre>
       <?php endif; ?>
     </div>
     <div class="one-half column">
       <?php if ($output): ?>
-      <pre><code>Output: {{ download.output }}</code></pre>
+      <pre><code>Output: {{ info.output }}</code></pre>
       <?php endif; ?>
     </div>
     <a class="u-full-width button"
-       href={{ outputDir }}>Download {{ download.outputDir }}</a>
+       href={{ info.data['outputDir'] }}>Download {{ info.data['outputDir'] }}</a>
     <a class="u-full-width button" href="{{ url_for('home.base') }}">Back</a>
   </div>
 {% endblock %}

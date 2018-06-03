@@ -1,4 +1,5 @@
 from flask import flash, render_template, redirect, request, url_for
+import requests
 from werkzeug import secure_filename
 
 from . import home
@@ -14,47 +15,42 @@ def base():
 
 @home.route('/download', methods=['POST'])
 def download():
-    url = request.form['url']
-    outputDir = None
-    provider = None
-    username = None
-    password = None
     error = None
-
-    if not url:
+    if 'url' not in request.form:
         error = 'Url is required'
 
+    data = { 'url' : request.form['url'] }
+
     if 'outputDir' in request.form and request.form['outputDir']:
-        outputDir = secure_filename(request.form['outputDir'])
-    else:
-        # TODO: resolve default path
-        outputDir = 'TODO'
+        data['outputDir'] = secure_filename(request.form['outputDir'])
 
     if 'authenticate' in request.form and request.form['authenticate']:
-        provider = request.form['provider']
-        username = request.form['username']
-        password = request.form['password']
-        if not provider:
+        if 'provider' not in request.form and request.form['provider']:
             error = 'Provider is required when using authentication'
-        if not username:
+        if 'username' not in request.form and request.form['username']:
             error = 'Username is required when using a provider'
-        if not password:
+        if 'password' not in request.form and request.form['password']:
             error = 'Password is required when using a provider'
 
+        data['provider'] = request.form['provider']
+        data['username'] = request.form['username']
+        data['password'] = request.form['password']
+
     if error == None:
-        # TODO: fire off download request to api
-        # output = api.get_download_list
-        output = "TODO: Download has been queued"
+        if 'outputDir' not in data:
+            data['outputDir'] = 'TODO'
+        r = requests.post(url_for('api.get_download_list'), data = data)
+        # output = r.json()
+        # filename = output['filename']
+        output = 'TODO'
+        filename = 'TODO'
         info = {
-            'url': url,
+            'data': data,
+            'filename': filename,
             'output': output,
-            'outputDir': outputDir,
-            'provider': provider,
-            'username': username,
-            'password': password,
         }
         return render_template('download.html',
-                                download=info)
+                                info=info)
     else:
         flash(error)
 
