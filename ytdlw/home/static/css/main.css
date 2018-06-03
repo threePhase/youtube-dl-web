@@ -1,7 +1,13 @@
-input[type=checkbox]:checked~#authenticate {
+input[type=checkbox]:checked~#providerInfo {
   display: block;
 }
 
-#authenticate {
+#providerInfo {
   display: none;
+}
+
+button.error {
+  background-color: #ff3e1a;
+  border-color: #ff3e1a;
+  color: white;
 }

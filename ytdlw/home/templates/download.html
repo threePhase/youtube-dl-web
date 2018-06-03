@@ -1,32 +1,32 @@
 {% extends "layout.html" %}
-{% block title %}Downloading {{ filename }}{% endblock %}
+{% block title %}Downloading {{ download.filename }}{% endblock %}
 {% block container %}
   <h1>Downloading filename</h1>
   <div class="row">
     <div class="one-half column">
       <?php if ($outputDir): ?>
-      <pre><code>Output Directory: {{ outputDir }}</code></pre>
+      <pre><code>Output Directory: {{ download.outputDir }}</code></pre>
       <?php endif; ?>
       <?php if ($url): ?>
-      <pre><code>URL: {{ url }}</code></pre>
+      <pre><code>URL: {{ download.url }}</code></pre>
       <?php endif; ?>
       <?php if ($provider): ?>
-      <pre><code>Provider: {{ provider }}</code></pre>
+      <pre><code>Provider: {{ download.provider }}</code></pre>
       <?php endif; ?>
       <?php if ($username): ?>
-      <pre><code>Username: {{ username }}</code></pre>
+      <pre><code>Username: {{ download.username }}</code></pre>
       <?php endif; ?>
       <?php if ($password): ?>
-      <pre><code>Password: {{ password }}</code></pre>
+      <pre><code>Password: {{ download.password }}</code></pre>
       <?php endif; ?>
     </div>
     <div class="one-half column">
       <?php if ($output): ?>
-      <pre><code>Output: {{ output }}</code></pre>
+      <pre><code>Output: {{ download.output }}</code></pre>
       <?php endif; ?>
     </div>
     <a class="u-full-width button"
-       href={{ outputDir }}>Download {{ outputDir }}</a>
+       href={{ outputDir }}>Download {{ download.outputDir }}</a>
     <a class="u-full-width button" href="{{ url_for('home.base') }}">Back</a>
   </div>
 {% endblock %}

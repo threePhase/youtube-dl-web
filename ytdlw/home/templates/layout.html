@@ -15,6 +15,20 @@
 </head>
 <body>
   <div class="container">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class=flashes>
+      {% for message in messages %}
+        <div class=row>
+          <div class="eight columns offset-by-two">
+            <button class="u-full-width error">{{ message }}</button>
+          </div>
+        </div>
+      {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
   {% block container %}
   {% endblock %}
   </div>
