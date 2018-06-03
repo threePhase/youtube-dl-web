@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 api = Blueprint(
-    'site',
+    'api',
     __name__,
 )
 
