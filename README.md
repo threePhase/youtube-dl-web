@@ -89,3 +89,10 @@ Due to a
 Python applications that use `fork` must explicitly pass `env no_proxy='*'`
 when invoking `flask run`, otherwise the application will crash when making a
 download request to the API.
+
+```
+env no_proxy='*'
+export FLASK_APP=ytdlw
+export FLASK_ENV=development
+flask run
+```
