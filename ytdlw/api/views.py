@@ -8,9 +8,6 @@ import uuid
 from .download import Download, Provider
 from . import api
 
-host = '127.0.0.1'
-port = 8080
-
 downloads = {}
 pool = Pool()
 
