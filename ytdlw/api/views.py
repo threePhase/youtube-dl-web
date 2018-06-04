@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
-from flask import abort, jsonify, Flask, make_response, request, send_from_directory
+from flask import abort, jsonify, Flask, make_response, request, \
+    send_from_directory, url_for
 from multiprocessing import Pool
 import os
 import urllib.parse
@@ -10,43 +11,44 @@ from . import api
 
 downloads = {}
 pool = Pool()
+man = ('<pre><code>\n'
+       'youtube-dl as a service\n'
+       'POST outputDir [provider] [username] [password] url\n'
+       '</code></pre>'
+      )
 
-@api.route('/', methods=['GET'])
+@api.route('/', methods=['GET', 'POST'])
 def base():
-    man = ('<pre><code>\n'
-           'youtube-dl as a service\n'
-           'POST outputDir [provider] [username] [password] url\n'
-           '</code></pre>'
-          )
-    return man
+    if request.method == 'GET':
+        return man
+    else:
+        url = request.form['url']
+
+        output_dir = os.environ['BASE_DIR']
+        if 'outputDir' in request.form:
+            output_dir = '{}/{}'.format(output_dir, request.form['outputDir'])
+
+        provider = None
+        # add authentication parameters if present in request
+        if 'provider' in request.form:
+            provider = Provider('Comcast_SSO', request.form['username'], request.form['password'])
+            print('Setting up authentication using {}'.format(provider.mso))
+
+        # queue download video
+        print(f'Creating download task for: {url}')
+
+        download_id = uuid.uuid4()
+        downloads[download_id] = pool.apply_async(Download,
+            (download_id, url, output_dir, provider,))
+
+        url = url_for('.get_download_by_id',
+                        download_id=download_id,
+                        _external=True)
+        return f'{url}'
 
 @api.route('/downloads', methods=['GET'])
 def get_downloads():
     return jsonify(list(downloads.keys()))
-
-@api.route('/downloads', methods=['POST'])
-def get_download_list():
-    url = request.form['url']
-
-    output_dir = os.environ['BASE_DIR']
-    if 'outputDir' in request.form:
-        output_dir = '{}/{}'.format(output_dir, request.form['outputDir'])
-
-    provider = None
-    # add authentication parameters if present in request
-    if 'provider' in request.form:
-        provider = Provider('Comcast_SSO', request.form['username'], request.form['password'])
-        print('Setting up authentication using {}'.format(provider.mso))
-
-    # queue download video
-    print(f'Creating download task for: {url}')
-
-    download_id = uuid.uuid4()
-    downloads[download_id] = pool.apply_async(Download,
-        (download_id, url, output_dir, provider,))
-
-    url = urllib.parse.urljoin(request.url + '/', str(download_id))
-    return f'{url}'
     
 @api.route('/downloads/<uuid:download_id>', methods=['GET'])
 def get_download_by_id(download_id):

@@ -37,7 +37,7 @@ def download():
         data['password'] = request.form['password']
 
     if error == None:
-        r = requests.post(url_for('api.get_download_list'), data = data)
+        r = requests.post(url_for('api.base'), data = data)
         # output = r.json()
         # link = output['link']
         output = r.text
