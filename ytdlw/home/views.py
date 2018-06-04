@@ -9,7 +9,7 @@ from .forms import DownloadForm
 def base():
     form = DownloadForm()
     if form.validate_on_submit():
-        return redirect(url_for('download'))
+        return redirect(url_for('.download'))
 
     return render_template('index.html', form=form)
 
@@ -52,4 +52,4 @@ def download():
     else:
         flash(error)
 
-    return redirect(url_for('home.base'))
+    return redirect(url_for('.base'))
