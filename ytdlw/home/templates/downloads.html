@@ -14,7 +14,7 @@
         {% for download in downloads %}
         <tr>
           <td>{{ download.id }}</td>
-          <td>{{ download.url }}</td>
+          <td><a href="{{ download.url }}">{{ download.url }}</a></td>
         </tr>
         {% endfor %}
       </tbody>
