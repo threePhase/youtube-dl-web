@@ -3,6 +3,7 @@ import requests
 from werkzeug import secure_filename
 
 from . import home
+from .models import Download
 from .forms import DownloadForm
 
 @home.route('/', methods=['GET'])
@@ -53,3 +54,12 @@ def download():
         flash(error)
 
     return redirect(url_for('.base'))
+
+@home.route('/downloads', methods=['GET'])
+def downloads():
+    r = requests.get(url_for('api.get_downloads'))
+    downloads = []
+    for download_id in r.json():
+        url = url_for('api.get_download_by_id', download_id=download_id, _external=True)
+        downloads.append(Download(download_id, url))
+    return render_template('downloads.html', downloads=downloads)

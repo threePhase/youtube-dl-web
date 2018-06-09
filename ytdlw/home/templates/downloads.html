@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %}Downloads{% endblock %}
+{% block container %}
+  <h1>Downloads</h1>
+  <div class="row">
+    <table class="u-full-width">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for download in downloads %}
+        <tr>
+          <td>{{ download.id }}</td>
+          <td>{{ download.url }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
